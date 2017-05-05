@@ -1,0 +1,35 @@
+// TODO: fully implement this file
+// TODO: comment this file
+
+import acm.util.*;
+import java.io.*;
+import java.util.*;
+
+public class HangmanLexicon {
+	public String getRandomWord() {
+		// TODO: replace the body of this method with
+		//       a real implementation that reads a file
+		return getRandomWordFromFixedSet();
+	}
+	
+	/**
+	 * This instructor-provided method returns a randomly chosen word
+	 * from a small fixed set of choices.
+	 * This is the initial implementation of getRandomWord.
+	 * You should change getRandomWord so that it doesn't call this method
+	 * anymore, and instead, reads from a file and chooses one of its words.
+	 */
+	public String getRandomWordFromFixedSet() {
+		RandomGenerator randy = RandomGenerator.getInstance();
+		int randomNumber = randy.nextInt(1, 4);
+		if (randomNumber == 1) {
+			return "TRICKY";
+		} else if (randomNumber == 2) {
+			return "COMPUTER";
+		} else if (randomNumber == 3) {
+			return "JAVA";
+		} else { // randomNumber == 4
+			return "PROGRAMMER";
+		}
+	}
+}

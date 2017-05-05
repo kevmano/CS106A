@@ -1,0 +1,34 @@
+// TODO: fully implement this file
+// TODO: comment this file
+
+import acm.util.*;
+import java.io.*;
+import java.util.*;
+
+public class HangmanLexicon {
+	private ArrayList <String> wordChoices;
+	
+	public HangmanLexicon() {
+		wordChoices = new ArrayList <String> ();
+		Scanner newLexicon;
+		try {
+			newLexicon = new Scanner(new File("res/lexicon-large.txt"));
+			while(newLexicon.hasNextLine()) {
+				String lexicon = newLexicon.nextLine();
+				wordChoices.add(lexicon);
+			}
+		} catch (FileNotFoundException fnfe){
+			throw new ErrorException(fnfe);
+		}
+	}
+	
+	public String getRandomWord() {
+		return getRandomWordFromLexicon();
+	}
+	
+	public String getRandomWordFromLexicon() {
+		RandomGenerator randy = RandomGenerator.getInstance();
+		int randomNumber = randy.nextInt(1, wordChoices.size());
+		return wordChoices.get(randomNumber);
+	}
+}

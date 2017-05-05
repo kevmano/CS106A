@@ -1,0 +1,288 @@
+/*
+ * Name: Kevin Manouchehri	Section: Thaminda Edirisooriya Thursday 10:00
+ * This program creates the game of Hangman and allows a user to play multiple games. It chooses a random word from a very large lexicon and asks the user
+ * to guess individual letters. The program is set such that the user gets 8 incorrect guesses before he or she loses the game. If the user guesses all
+ * of the letters of the word before all 8 incorrect guesses have been used, he or she wins. After each game is completed, the user is asked whether he or
+ * she would like to play another game. If the user inputs 'y', then another game is set up. If 'n' is entered, the session is completed, and the user
+ * receives statistics that include all of the games the user played during the session. Lecture slides and the Java reference pages on Oracle's web site
+ * were used when developing the ins and outs of this program.
+ */
+
+import acm.program.*;
+import acm.util.*;
+import java.io.*;     // for File
+import java.util.*;   // for Scanner
+
+public class Hangman extends ConsoleProgram {
+	private HangmanLexicon lexicon;
+	private static final int wrongGuesses = 8;
+	
+	public void run() {
+		setFont("Monospaced-Bold-12");
+		welcomeMessage();
+		play();
+	}
+	
+	/*
+	 * This picks and returns a random word by calling the HangmanLexicon class. A random word is selected from the large lexicon of words.
+	 */
+	public String pickWord() {
+		lexicon = new HangmanLexicon();
+		String secretWord = lexicon.getRandomWord();
+		return secretWord;
+	}
+	
+	/*
+	 * This displays the welcome message that greets the user at the beginning when a user starts a new session.
+	 */
+	public void welcomeMessage() {
+		println("Welcome to CS 106A Hangman!" +
+				" In this classic game, I will think of a random word, and" +
+				" you will try to guess letters from that word." +
+				" Every time you guess a letter that isn't in my word," +
+				" a new body part of the hanging man will appear." +
+				" Guess correctly to avoid the gallows!");
+		println();
+	}
+	
+	/*
+	 * This is the main method that runs the gameplay. Before each turn, it displays the gallows according to how many turns are left as well as
+	 * what letters of the secret word the user has guessed, the total letters guessed so far, and how many incorrect guesses the user has left. Then,
+	 * it asks the user to guess a letter and displays a message according to whether the letter is found in the secret word. The hint is updated, and
+	 * the loop repeats until the user runs out of incorrect guesses or the secret word has been uncovered. If the user wants to stop playing, the
+	 * statistics of the session are then displayed.
+	 */
+	public void play() {
+		int gamesPlayed = 0;
+		int wins = 0;
+		int bestGame = 0;
+		while (true) {
+			gamesPlayed++;
+			String word = pickWord();
+			String newHint = hint(word);
+			String lettersGuessed = "";
+			int guessesLeft = wrongGuesses;
+			while (guessesLeft > 0) {
+				theGallows(guessesLeft);								//Displays the gallows according to how many guesses are left.
+				println("Secret word: " + newHint);
+				println("Your guesses so far: " + lettersGuessed);
+				println("Guesses left: " + guessesLeft);
+				char letter = getGuess();								//Calls what the user has guessed on that turn.
+				if (lettersGuessed.indexOf(letter) == -1) {
+					lettersGuessed += letter;
+					if (word.indexOf(letter) != -1) {
+						for (int i = 0; i < word.length(); i++) {
+							if (letter == word.charAt(i)) {
+								newHint = newHint.substring(0, i) + letter
+										+ newHint.substring(i + 1);
+							}
+						}
+						println("Correct! That letter is found in my word.");
+					} else {
+						guessesLeft--;
+						println("Incorrect. There are no " + letter + "'s found in my word.");
+					}
+				} else {
+					println("Invalid input; you have already guessed that letter. Try again.");
+				}
+				println();
+				if (newHint.equals(word)) {
+					if (guessesLeft > bestGame) {					//Sets new best game guess score.
+						bestGame = guessesLeft;
+					}
+					wins++;
+					break;
+				}
+			}
+			checkForWinOrLoss(word, newHint);
+			if (!askToPlayAgain()) {								//If the user says no to playing again.
+				break;
+			}
+		}
+		displayStats(gamesPlayed, wins, bestGame);
+	}
+	
+	/*
+	 * This method uses the parameters of the current hint and the secret word to check to see if the user has won or lost once the game ends. 
+	 * If the hint is the same as the secret word, obviously the user has won, and he or she is informed with a message.
+	 */
+	public void checkForWinOrLoss(String word, String hint) {
+		if (hint.equals(word)) {
+			println("You win! You guessed my word " + word);
+		}
+		else {
+			println("You lose. You failed to guess my word " + word);
+		}
+	}
+	
+	/*
+	 * This asks the user if he or she would like to play again after a game ends. As long as the user says yes, the loop in method play() continues with
+	 * a new game. However, if the user says no, the boolean returns false, and the session ends.
+	 */
+	public boolean askToPlayAgain() {
+		String playAgain = readLine("Do you want to play again? (Y/N) ");
+		while (!playAgain.equalsIgnoreCase("N")) {		//While the user has not entered the key for no.
+		if (playAgain.equalsIgnoreCase("Y")) {
+			return true;
+		}
+		else {
+			println("Invalid input; please type a line that starts with 'Y' or 'N'.");
+		}
+		playAgain = readLine("Do you want to play again? (Y/N) ");
+		}
+		return false;
+		}
+	
+	/*
+	 * Once the user has stated that he or she does not want to play another game, this displays the statistics that the user has accrued over the course
+	 * of the session. It tells how many games have been played, how many have been won, the win percentage, and the most remaining guesses for a winning
+	 * game. Once these stats are displayed, the program no longer adds any more information to the console.
+	 */
+	public void displayStats(int gamesPlayed, int wins, int bestGame) {
+		double winRatio = (wins * 1.0 / gamesPlayed) * 100.0;
+		println("Overall Statistics:");
+		println("Games played: " + gamesPlayed);
+		println("Games won: " + wins);
+		println("Win percent: " + winRatio + "%");
+		println("Best game: " + bestGame + " guess(es) remaining");
+		println("Thanks for playing! :)");
+	}
+	
+	/*
+	 * This displays the stages of the hanging man at the gallows as more incorrect guesses are made. It takes the parameter of how many incorrect guesses
+	 * are left to determine which stage of the gallows to display.
+	 */
+	public void theGallows(int guessesLeft) {
+		if (guessesLeft == 8) {												//Only the gallows are present.
+			Scanner gallows;
+			try {
+				gallows = new Scanner(new File("res/display8.txt"));
+				while(gallows.hasNextLine()) {
+					String blankGallows = gallows.nextLine();
+					println(blankGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		}
+		else if (guessesLeft == 7) {										//The head is now present.
+			Scanner head;
+			try {
+				head = new Scanner(new File("res/display7.txt"));
+				while(head.hasNextLine()) {
+					String headGallows = head.nextLine();
+					println(headGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 6) {										//The torso is added.
+			Scanner torso;
+			try {
+				torso = new Scanner(new File("res/display6.txt"));
+				while(torso.hasNextLine()) {
+					String torsoGallows = torso.nextLine();
+					println(torsoGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 5) {										//The man now has one arm.
+			Scanner rightArm;
+			try {
+				rightArm = new Scanner(new File("res/display5.txt"));
+				while(rightArm.hasNextLine()) {
+					String rightArmGallows = rightArm.nextLine();
+					println(rightArmGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 4) {										//The other arm is added.
+			Scanner leftArm;
+			try {
+				leftArm = new Scanner(new File("res/display4.txt"));
+				while(leftArm.hasNextLine()) {
+					String leftArmGallows = leftArm.nextLine();
+					println(leftArmGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 3) {										//One leg is present.
+			Scanner rightLeg;
+			try {
+				rightLeg = new Scanner(new File("res/display3.txt"));
+				while(rightLeg.hasNextLine()) {
+					String rightLegGallows = rightLeg.nextLine();
+					println(rightLegGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 2) {										//The man has two legs now.
+			Scanner leftLeg;
+			try {
+				leftLeg = new Scanner(new File("res/display2.txt"));
+				while(leftLeg.hasNextLine()) {
+					String leftLegGallows = leftLeg.nextLine();
+					println(leftLegGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 1) {										//The first foot is added.
+			Scanner rightFoot;
+			try {
+				rightFoot = new Scanner(new File("res/display1.txt"));
+				while(rightFoot.hasNextLine()) {
+					String rightFootGallows = rightFoot.nextLine();
+					println(rightFootGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		}
+		if (guessesLeft == 0) {												//The second foot is added, and the man is hanged.
+		Scanner gallows;
+		try {
+			gallows = new Scanner(new File("res/display8.txt"));
+			while(gallows.hasNextLine()) {
+				String blankGallows = gallows.nextLine();
+				println(blankGallows);
+			}
+		} catch (FileNotFoundException fnfe){
+			println("Error reading the file: " + fnfe);
+		}
+	} 
+	}
+	
+	/*
+	 * This obtains the letter that the user guesses. It asks the user to input a letter and makes sure that the letter is of length 1. It then returns
+	 * the letter to where it is called in the play() method.
+	 */
+	public char getGuess() {
+		while (true) {
+		String guess = readLine("Your guess? ");					//Asks for an input of a letter.
+		if (guess.length() == 1) {
+			char letter = guess.charAt(0);							//Set the guess as a character.
+			if (Character.isLetter(letter)) {
+			letter = Character.toUpperCase(letter);
+			}
+		return letter;
+		}
+		else {
+		println("Invalid input; you must type a single letter from A-Z.");
+		}
+		}
+	}
+
+	public String hint(String word) {
+		String newHint = "";
+		for (int i = 0; i < word.length(); i++) {
+			newHint += "-";
+		}
+		return newHint;
+	}
+    
+}

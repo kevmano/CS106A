@@ -1,0 +1,58 @@
+// TODO: fully implement this file
+// TODO: comment this file
+
+import acm.util.*;
+import java.io.*;
+import java.util.*;
+
+public class HangmanLexicon {
+	private ArrayList <String> wordChoices;
+	
+	public String getRandomWord() {
+		return getRandomWordFromFixedSet();
+	}
+	
+	public HangmanLexicon() {
+		wordChoices = new ArrayList <String> ();
+		Scanner newLexicon;
+		try {
+			newLexicon = new Scanner(new File("res/lexicon-small.txt"));
+			while(newLexicon.hasNextLine()) {
+				String lexicon = newLexicon.nextLine();
+				wordChoices.add(lexicon);
+			}
+		} catch (FileNotFoundException fnfe){
+		}
+	}
+	
+	public String getRandomWordFromLexicon() {
+		RandomGenerator randy = RandomGenerator.getInstance();
+		int randomNumber = randy.nextInt(1, wordChoices.size());
+		return wordChoices.get(randomNumber);
+	}
+	
+
+	
+
+	
+	/**
+	 * This instructor-provided method returns a randomly chosen word
+	 * from a small fixed set of choices.
+	 * This is the initial implementation of getRandomWord.
+	 * You should change getRandomWord so that it doesn't call this method
+	 * anymore, and instead, reads from a file and chooses one of its words.
+	 */
+	public String getRandomWordFromFixedSet() {
+		RandomGenerator randy = RandomGenerator.getInstance();
+		int randomNumber = randy.nextInt(1, lexicon.length);
+		if (randomNumber == 1) {
+			return "TRICKY";
+		} else if (randomNumber == 2) {
+			return "COMPUTER";
+		} else if (randomNumber == 3) {
+			return "JAVA";
+		} else { // randomNumber == 4
+			return "PROGRAMMER";
+		}
+	}
+}

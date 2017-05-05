@@ -1,0 +1,33 @@
+// TODO: comment this file (if you choose to write it)
+//       (This file is for an optional extra credit feature.)
+
+import acm.graphics.*;
+
+public class HangmanCanvas extends GCanvas {
+	private static final int scaffoldHeight = 350;
+	private static final int scaffoldWidth = 175;
+	private static final int ropeHeight = 20;
+	public void drawScaffold() {
+		double vertScaffoldX = getWidth() / 4;
+		double vertScaffoldY = getHeight();
+		GLine vertScaffold = new GLine(vertScaffoldX, vertScaffoldY, vertScaffoldX, vertScaffoldY - scaffoldHeight);
+		add(vertScaffold);
+		double horizScaffoldX = getWidth() / 4;
+		double horizScaffoldY = vertScaffoldY - scaffoldHeight;
+		GLine horizScaffold = new GLine(horizScaffoldX, horizScaffoldY, horizScaffoldX + scaffoldWidth, horizScaffoldY);
+		add(horizScaffold);
+		double ropeX = horizScaffoldX + scaffoldWidth;
+		double ropeY = horizScaffoldY;
+		GLine rope = new GLine(ropeX, ropeY, ropeX, ropeY + ropeHeight);
+		add(rope);
+	}
+	
+	public void drawMan(int guessesLeft) {
+		if (guessesLeft == 8) {
+		drawScaffold();
+		}
+	}
+	// TODO: write this file (optional)
+	//       (treat it like a GraphicsProgram and add() graphical objects to it)
+	
+}

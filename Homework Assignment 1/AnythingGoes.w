@@ -1,0 +1,1 @@
+Dimension: (10, 10)Wall: (5,5) westWall: (5,5) southWall: (6,5) southWall: (5,5) northWall: (6,5) northBeeperBag: INFINITYKarel: (1, 1) EastSpeed: 0.1

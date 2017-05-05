@@ -1,0 +1,214 @@
+// TODO: comment this file
+
+import acm.program.*;
+import acm.util.*;
+import java.io.*;     // for File
+import java.util.*;   // for Scanner
+
+public class Hangman extends ConsoleProgram {
+	private HangmanLexicon lexicon;
+	private static final int wrongGuesses = 8;
+	
+	public void run() {
+		setFont("Monospaced-Bold-12");
+		welcomeMessage();
+		play();
+	}
+	
+	public String pickWord() {
+		lexicon = new HangmanLexicon();
+		String secretWord = lexicon.getRandomWord();
+		return secretWord;
+	}
+	
+	public void welcomeMessage() {
+		println("Welcome to CS 106A Hangman!" +
+				" In this classic game, I will think of a random word, and" +
+				" you will try to guess letters from that word." +
+				" Every time you guess a letter that isn't in my word," +
+				" a new body part of the hanging man will appear." +
+				" Guess correctly to avoid the gallows!");
+		println();
+	}
+	
+	public void play() {
+		theGallows(wrongGuesses);
+		checkGuess();
+	}
+	
+//	public void printStartInfo() {
+//		String hint = hint();
+//		println("Secret word: " + hint);
+//		println("Your guesses so far: " );
+//		println("Guesses left: " + wrongGuesses);
+//	}
+	
+	public void checkGuess() {
+		String word = pickWord();
+		String newHint = hint(word);
+		String lettersGuessed = "";
+		int guessesLeft = wrongGuesses;
+		while (guessesLeft > 0) {
+			println("Secret word: " + newHint);
+			println("Your guesses so far: " + lettersGuessed);
+			println("Guesses left: " + guessesLeft);
+			char letter = getGuess();
+		if (lettersGuessed.indexOf(letter) == -1) {
+			lettersGuessed += letter;
+		if (word.indexOf(letter) != -1) {
+			for (int i = 0; i < word.length(); i++) {
+				if (letter == word.charAt(i)) {
+					newHint = newHint.substring(0,i) + letter + newHint.substring(i+1);
+				}
+			}
+			println("Correct! That letter is found in my word.");
+		}
+		else {
+			guessesLeft--;
+			println("Incorrect. There are no " + letter + "'s found in my word.");
+		}
+		}
+		else {
+			println("Invalid input; you have already guessed that letter. Try again.");
+		}
+		println();
+		theGallows(guessesLeft);
+		if (newHint.equals(word)) {
+			println("You win! You guessed my word " + word);
+		}
+		break;
+		}
+		if (!newHint.equals(word)) {
+			println("You lose! You failed to guess my word" + word);
+		}
+		String playAgain = readLine("Do you want to play again? (Y/N) ");
+		if (playAgain.equalsIgnoreCase("N")) {
+			println("See ya");
+		}
+	}
+	
+	public void theGallows(int guessesLeft) {
+		if (guessesLeft == 8) {
+			Scanner gallows;
+			try {
+				gallows = new Scanner(new File("res/display8.txt"));
+				while(gallows.hasNextLine()) {
+					String blankGallows = gallows.nextLine();
+					println(blankGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		}
+		else if (guessesLeft == 7) {
+			Scanner head;
+			try {
+				head = new Scanner(new File("res/display7.txt"));
+				while(head.hasNextLine()) {
+					String headGallows = head.nextLine();
+					println(headGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 6) {
+			Scanner torso;
+			try {
+				torso = new Scanner(new File("res/display6.txt"));
+				while(torso.hasNextLine()) {
+					String torsoGallows = torso.nextLine();
+					println(torsoGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 5) {
+			Scanner rightArm;
+			try {
+				rightArm = new Scanner(new File("res/display5.txt"));
+				while(rightArm.hasNextLine()) {
+					String rightArmGallows = rightArm.nextLine();
+					println(rightArmGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 4) {
+			Scanner leftArm;
+			try {
+				leftArm = new Scanner(new File("res/display4.txt"));
+				while(leftArm.hasNextLine()) {
+					String leftArmGallows = leftArm.nextLine();
+					println(leftArmGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 3) {
+			Scanner rightLeg;
+			try {
+				rightLeg = new Scanner(new File("res/display3.txt"));
+				while(rightLeg.hasNextLine()) {
+					String rightLegGallows = rightLeg.nextLine();
+					println(rightLegGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 2) {
+			Scanner leftLeg;
+			try {
+				leftLeg = new Scanner(new File("res/display2.txt"));
+				while(leftLeg.hasNextLine()) {
+					String leftLegGallows = leftLeg.nextLine();
+					println(leftLegGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		} else if (guessesLeft == 1) {
+			Scanner rightFoot;
+			try {
+				rightFoot = new Scanner(new File("res/display1.txt"));
+				while(rightFoot.hasNextLine()) {
+					String rightFootGallows = rightFoot.nextLine();
+					println(rightFootGallows);
+				}
+			} catch (FileNotFoundException fnfe){
+				println("Error reading the file: " + fnfe);
+			}
+		}
+		if (guessesLeft == 0) {
+		Scanner gallows;
+		try {
+			gallows = new Scanner(new File("res/display8.txt"));
+			while(gallows.hasNextLine()) {
+				String blankGallows = gallows.nextLine();
+				println(blankGallows);
+			}
+		} catch (FileNotFoundException fnfe){
+			println("Error reading the file: " + fnfe);
+		}
+	} 
+	}
+	
+	public char getGuess() {
+		while (true) {
+		String guess = readLine("Your guess? ").toUpperCase();
+		char letter = guess.charAt(0);
+		if (guess.length() == 1 && Character.isLetter(letter)) {
+		return letter;
+		}
+		println("Invalid input; you must type a single letter from A-Z.");
+		}
+	}
+
+	public String hint(String word) {
+		String newHint = "";
+		for (int i = 0; i < word.length(); i++) {
+			newHint += "-";
+		}
+		return newHint;
+	}
+    
+}
